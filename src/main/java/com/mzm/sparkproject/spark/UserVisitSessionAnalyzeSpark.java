@@ -8,6 +8,7 @@ import com.mzm.sparkproject.dao.impl.DaoFactory;
 import com.mzm.sparkproject.domain.Task;
 import com.mzm.sparkproject.test.MockData;
 import com.mzm.sparkproject.utils.ParamUtils;
+import com.mzm.sparkproject.utils.StringUtils;
 import org.apache.spark.SparkConf;
 import org.apache.spark.SparkContext;
 import org.apache.spark.api.java.JavaPairRDD;
@@ -19,6 +20,8 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
 import org.apache.spark.sql.hive.HiveContext;
 import scala.Tuple2;
+
+import java.util.Iterator;
 
 /**
  * 用户访问session分析和spark作业
@@ -49,6 +52,8 @@ public class UserVisitSessionAnalyzeSpark {
 
         //从user_visit_action表中，查询出指定日期范围内的行为数据
         JavaRDD<Row> actionRDD = getActionRDDByDateRange(sqlContext, taskParam);
+
+        JavaPairRDD<String, String> sessionId2FullAggeInfoRDD = aggregateBySession(actionRDD, sqlContext);
 
         //将Spark Context关闭
         sc.close();
@@ -107,7 +112,8 @@ public class UserVisitSessionAnalyzeSpark {
      * @param actionRDD 行为数据RDD
      * @return session粒度聚合后的行为数据RDD
      */
-    private static JavaPairRDD<String, String> aggregateBySession(JavaRDD<Row> actionRDD) {
+    private static JavaPairRDD<String, String> aggregateBySession(JavaRDD<Row> actionRDD, SQLContext
+            sqlContext) {
 
         //将行为数据映射成元组对(会话ID,行为数据)
         JavaPairRDD<String, Row> session2ActionRDD = actionRDD.mapToPair(
@@ -132,7 +138,103 @@ public class UserVisitSessionAnalyzeSpark {
         //对行为数据按照sessionId进行分组
         JavaPairRDD<String, Iterable<Row>> session2ActionsRDD = session2ActionRDD.groupByKey();
 
-        // 对每一个session分组进行聚合，将session中所有的搜索词和点击品类都聚合起来
-        return null;
+        //对每一个session分组进行聚合，将session中所有的搜索词和点击品类都聚合起来
+        JavaPairRDD<Long, String> userId2PartAggrInfoRDD = session2ActionsRDD.mapToPair(
+                new PairFunction<Tuple2<String, Iterable<Row>>, Long, String>() {
+                    @Override
+                    public Tuple2<Long, String> call(Tuple2<String, Iterable<Row>> tuple) throws
+                            Exception {
+                        String sessionId = tuple._1;
+                        Iterator<Row> iterator = tuple._2.iterator();
+
+                        StringBuilder searchKeywordSB = new StringBuilder();
+                        StringBuilder clickCategoryIdSB = new StringBuilder();
+
+                        Long userId = null;
+                        //遍历会话的所有行为
+                        while (iterator.hasNext()) {
+                            //获取搜索词和点击品类ID
+                            Row row = iterator.next();
+                            String searchKeyword = row.getString(5);
+                            Long clickCategoryId = row.getLong(6);
+                            if (userId == null) {
+                                userId = row.getLong(1);
+                            }
+
+                            if (StringUtils.isNotEmpty(searchKeyword)) {
+                                //必须非空
+                                if (!searchKeywordSB.toString().contains(searchKeyword)) {
+                                    //不能重复
+                                    searchKeywordSB.append(searchKeyword).append(",");
+                                }
+                            }
+
+                            if (clickCategoryId != null) {
+                                //必须非空
+                                if (!clickCategoryIdSB.toString().contains(String.valueOf(clickCategoryId))) {
+                                    //不能重复
+                                    clickCategoryIdSB.append(clickCategoryId).append(",");
+                                }
+                            }
+                        }
+
+                        String searchKeywords = StringUtils.trimComma(searchKeywordSB.toString());
+                        String clickCategoryIds = StringUtils.trimComma(clickCategoryIdSB.toString());
+
+                        String partAggrInfo = new StringBuilder().
+                                append(Constants.FIELD_SESSION_ID).append("=").append(sessionId).append("|").
+                                append(Constants.FIELD_SEARCH_KEYWORDS).append("=").append(searchKeywords)
+                                .append("|").
+                                        append(Constants.FIELD_CLICK_CATEGORY_IDS).append("=").append
+                                        (clickCategoryIds)
+                                .toString();
+
+                        return new Tuple2<>(userId, partAggrInfo);
+                    }
+                });
+        //查询所有用户数据
+        String sql = "select * from user_info";
+        JavaRDD<Row> userInfoRDD = sqlContext.sql(sql).javaRDD();
+
+        //将用户数据映射成<userId, Row>
+        JavaPairRDD<Long, Row> userId2InfoRDD = userInfoRDD.mapToPair(
+                new PairFunction<Row, Long, Row>() {
+                    @Override
+                    public Tuple2<Long, Row> call(Row row) throws Exception {
+                        return new Tuple2<>(row.getLong(0), row);
+                    }
+                });
+
+        //将session粒度数据与用户信息进行join
+        JavaPairRDD<Long, Tuple2<String, Row>> userId2FullInfoRDD = userId2PartAggrInfoRDD.join
+                (userId2InfoRDD);
+
+        //拼接join后的数据，(userId,(userInfo,partAggrInfo)) ---> (sessionId,fullAggrInfo)
+        JavaPairRDD<String, String> sessionId2FullAggeInfoRDD = userId2FullInfoRDD.mapToPair(
+                new PairFunction<Tuple2<Long, Tuple2<String, Row>>, String, String>() {
+                    @Override
+                    public Tuple2<String, String> call(Tuple2<Long, Tuple2<String, Row>> tuple)
+                            throws Exception {
+                        //获取部分聚合信息
+                        String partAggrInfo = tuple._2._1;
+                        Row userInfoRow = tuple._2._2;
+
+                        String sessionId = StringUtils.getFieldFromConcatString(partAggrInfo, "\\|",
+                                Constants.FIELD_SESSION_ID);
+
+                        int age = userInfoRow.getInt(3);
+                        String professional = userInfoRow.getString(4);
+                        String city = userInfoRow.getString(5);
+                        String gender = userInfoRow.getString(6);
+
+                        String fullAggrInfo = new StringBuilder(partAggrInfo).append("|").
+                                append(Constants.FIELD_AGE).append("=").append(age).append("|").
+                                append(Constants.FIELD_PROFESSIONAL).append("=").append(professional).append("|").
+                                append(Constants.FIELD_CITY).append("=").append(city).append("|").
+                                append(Constants.FIELD_GENDER).append("=").append(gender).toString();
+                        return new Tuple2<>(sessionId, fullAggrInfo);
+                    }
+                });
+        return sessionId2FullAggeInfoRDD;
     }
 }

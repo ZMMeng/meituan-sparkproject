@@ -27,6 +27,20 @@ public interface Constants {
      */
     //session分析作业名称
     String SPARK_APP_NAME_SESSION = "UserVisitSessionAnalyzeSpark";
+    //会话ID
+    String FIELD_SESSION_ID = "sessionId";
+    //搜索关键词
+    String FIELD_SEARCH_KEYWORDS = "searchKeywords";
+    //点击品类ID
+    String FIELD_CLICK_CATEGORY_IDS = "clickCategoryIds";
+    //用户年龄
+    String FIELD_AGE = "age";
+    //用户专业
+    String FIELD_PROFESSIONAL = "professional";
+    //用户所在城市
+    String FIELD_CITY = "city";
+    //用户性别
+    String FIELD_GENDER = "gender";
 
     /**
      * 任务相关常量
