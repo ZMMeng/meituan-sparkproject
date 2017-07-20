@@ -1,5 +1,6 @@
 package com.mzm.sparkproject.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -10,10 +11,10 @@ import java.util.Date;
  */
 public class DateUtils {
 
-    public static final SimpleDateFormat TIME_FORMAT =
-            new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-    public static final SimpleDateFormat DATE_FORMAT =
-            new SimpleDateFormat("yyyy-MM-dd");
+    public static final SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+    public static final SimpleDateFormat DATEKEY_FORMAT = new SimpleDateFormat("yyyyMMdd");
+
 
     /**
      * 判断一个时间是否在另一个时间之前
@@ -134,4 +135,19 @@ public class DateUtils {
     public static String formatTime(Date date) {
         return TIME_FORMAT.format(date);
     }
+
+    /**
+     * 解析时间字符串
+     *
+     * @param time 时间字符串
+     * @return Date
+     */
+    public static Date parseTime(String time) {
+        try {
+            return TIME_FORMAT.parse(time);
+        } catch (ParseException e) {
+            throw new RuntimeException("解析时间字符串：" + time + "失败！", e);
+        }
+    }
+
 }

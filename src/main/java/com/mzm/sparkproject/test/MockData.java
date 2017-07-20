@@ -36,19 +36,19 @@ public class MockData {
         Random random = new Random();
 
         for (int i = 0; i < 100; i++) {
-            long userId = random.nextInt(100);
+            String userId = String.valueOf(random.nextInt(100));
 
             for (int j = 0; j < 10; j++) {
                 String sessionId = UUID.randomUUID().toString().replace("-", "");
                 String baseActionTime = date + " " + random.nextInt(23);
 
                 for (int k = 0; k < random.nextInt(100); k++) {
-                    long pageId = random.nextInt(10);
+                    String pageId = String.valueOf(random.nextInt(10));
                     String actionTime = baseActionTime + ":" + StringUtils.fulfuill(String.valueOf(random
 							.nextInt(59))) + ":" + StringUtils.fulfuill(String.valueOf(random.nextInt(59)));
                     String searchKeyword = null;
-                    Long clickCategoryId = null;
-                    Long clickProductId = null;
+                    String clickCategoryId = null;
+                    String clickProductId = null;
                     String orderCategoryIds = null;
                     String orderProductIds = null;
                     String payCategoryIds = null;
@@ -58,8 +58,8 @@ public class MockData {
                     if ("search".equals(action)) {
                         searchKeyword = searchKeywords[random.nextInt(10)];
                     } else if ("click".equals(action)) {
-                        clickCategoryId = Long.valueOf(String.valueOf(random.nextInt(100)));
-                        clickProductId = Long.valueOf(String.valueOf(random.nextInt(100)));
+                        clickCategoryId = String.valueOf(random.nextInt(100));
+                        clickProductId = String.valueOf(random.nextInt(100));
                     } else if ("order".equals(action)) {
                         orderCategoryIds = String.valueOf(random.nextInt(100));
                         orderProductIds = String.valueOf(random.nextInt(100));
@@ -82,13 +82,13 @@ public class MockData {
 
         StructType schema = DataTypes.createStructType(Arrays.asList(
                 DataTypes.createStructField("date", DataTypes.StringType, true),
-                DataTypes.createStructField("user_id", DataTypes.LongType, true),
+                DataTypes.createStructField("user_id", DataTypes.StringType, true),
                 DataTypes.createStructField("session_id", DataTypes.StringType, true),
-                DataTypes.createStructField("page_id", DataTypes.LongType, true),
+                DataTypes.createStructField("page_id", DataTypes.StringType, true),
                 DataTypes.createStructField("action_time", DataTypes.StringType, true),
                 DataTypes.createStructField("search_keyword", DataTypes.StringType, true),
-                DataTypes.createStructField("click_category_id", DataTypes.LongType, true),
-                DataTypes.createStructField("click_product_id", DataTypes.LongType, true),
+                DataTypes.createStructField("click_category_id", DataTypes.StringType, true),
+                DataTypes.createStructField("click_product_id", DataTypes.StringType, true),
                 DataTypes.createStructField("order_category_ids", DataTypes.StringType, true),
                 DataTypes.createStructField("order_product_ids", DataTypes.StringType, true),
                 DataTypes.createStructField("pay_category_ids", DataTypes.StringType, true),
@@ -130,7 +130,7 @@ public class MockData {
                 DataTypes.createStructField("age", DataTypes.IntegerType, true),
                 DataTypes.createStructField("professional", DataTypes.StringType, true),
                 DataTypes.createStructField("city", DataTypes.StringType, true),
-                DataTypes.createStructField("sex", DataTypes.StringType, true)));
+                DataTypes.createStructField("gender", DataTypes.StringType, true)));
 
         DataFrame df2 = sqlContext.createDataFrame(rowsRDD, schema2);
         for (Row _row : df2.take(1)) {

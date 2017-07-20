@@ -1,5 +1,6 @@
 package com.mzm.sparkproject.dao.impl;
 
+import com.mzm.sparkproject.dao.ISessionAggrStatDao;
 import com.mzm.sparkproject.dao.ITaskDao;
 
 /**
@@ -15,5 +16,14 @@ public class DaoFactory {
      */
     public static ITaskDao getTaskDaoImpl() {
         return new TaskDaoImpl();
+    }
+
+    /**
+     * 获取会话聚合统计DAO
+     *
+     * @return 会话聚合统计DAO的实现类
+     */
+    public static ISessionAggrStatDao getSessionAggrStatDaoImpl(){
+        return new SessionAggrStatDaoImpl();
     }
 }
