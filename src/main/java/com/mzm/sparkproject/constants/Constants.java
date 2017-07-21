@@ -45,6 +45,13 @@ public interface Constants {
     String FIELD_VISIT_LENGTH = "visitLength";
     //访问步长
     String FIELD_STEP_LENGTH = "stepLength";
+    //会话开始时间
+    String FIELD_START_TIME = "startTime";
+    //品类ID点击计数
+    String FIELD_CLICK_COUNT = "clickCount";
+
+    //抽取会话数量
+    int EXTRACT_NUMBER = 100;
 
     //会话计数
     String SESSION_COUNT = "session_count";
