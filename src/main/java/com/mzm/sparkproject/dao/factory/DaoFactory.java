@@ -1,9 +1,7 @@
-package com.mzm.sparkproject.dao.impl;
+package com.mzm.sparkproject.dao.factory;
 
-import com.mzm.sparkproject.dao.ISessionAggrStatDao;
-import com.mzm.sparkproject.dao.ISessionDetailDao;
-import com.mzm.sparkproject.dao.ISessionRandomExtractDao;
-import com.mzm.sparkproject.dao.ITaskDao;
+import com.mzm.sparkproject.dao.*;
+import com.mzm.sparkproject.dao.impl.*;
 
 /**
  * Dao工厂类
@@ -45,5 +43,23 @@ public class DaoFactory {
      */
     public static ISessionDetailDao getSessionDetailDaoImpl(){
         return new SessionDetailDaoImpl();
+    }
+
+    /**
+     * 获取Top10热门品类DAO
+     *
+     * @return Top10热门品类DAO的实现类对象
+     */
+    public static ITop10CategoryDao getTop10CategoryDaoImpl(){
+        return new Top10CategoryDaoImpl();
+    }
+
+    /**
+     * 获取Top10活跃session的DAO
+     *
+     * @return Top10活跃session的DAO的实现类
+     */
+    public static ITop10SessionDao getTop10SessionDaoImpl(){
+        return new Top10SessionDaoImpl();
     }
 }

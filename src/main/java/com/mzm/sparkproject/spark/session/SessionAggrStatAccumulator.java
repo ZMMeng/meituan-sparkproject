@@ -1,4 +1,4 @@
-package com.mzm.sparkproject.spark;
+package com.mzm.sparkproject.spark.session;
 
 import com.mzm.sparkproject.constants.Constants;
 import com.mzm.sparkproject.utils.StringUtils;

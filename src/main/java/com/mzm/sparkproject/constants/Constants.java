@@ -47,8 +47,14 @@ public interface Constants {
     String FIELD_STEP_LENGTH = "stepLength";
     //会话开始时间
     String FIELD_START_TIME = "startTime";
+    //品类ID
+    String FIELD_CATEGORY_ID = "categoryId";
     //品类ID点击计数
     String FIELD_CLICK_COUNT = "clickCount";
+    //品类ID下单计数
+    String FIELD_ORDER_COUNT = "orderCount";
+    //品类ID支付计数
+    String FIELD_PAY_COUNT = "payCount";
 
     //抽取会话数量
     int EXTRACT_NUMBER = 100;
