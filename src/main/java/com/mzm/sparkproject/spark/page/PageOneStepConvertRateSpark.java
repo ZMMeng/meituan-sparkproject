@@ -2,14 +2,15 @@ package com.mzm.sparkproject.spark.page;
 
 import com.alibaba.fastjson.JSONObject;
 import com.mzm.sparkproject.constants.Constants;
+import com.mzm.sparkproject.dao.IPageSplitConvertRateDao;
 import com.mzm.sparkproject.dao.ITaskDao;
 import com.mzm.sparkproject.dao.factory.DaoFactory;
+import com.mzm.sparkproject.domain.PageSplitConvertRate;
 import com.mzm.sparkproject.domain.Task;
 import com.mzm.sparkproject.utils.DateUtils;
 import com.mzm.sparkproject.utils.NumberUtils;
 import com.mzm.sparkproject.utils.ParamUtils;
 import com.mzm.sparkproject.utils.SparkUtils;
-
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -21,7 +22,6 @@ import org.apache.spark.broadcast.Broadcast;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SQLContext;
 import org.apache.spark.storage.StorageLevel;
-
 import scala.Tuple2;
 
 import java.util.*;
@@ -81,6 +81,9 @@ public class PageOneStepConvertRateSpark {
 
         //计算各个切片的转化率
         Map<String, Double> convertRateMap = computePageSplitConvertRate(taskParam, pageSplitPvMap, startPagePv);
+
+        //向MySQL中插入页面切片转化率统计结果
+        persistConvertRate(convertRateMap, taskId);
     }
 
     /**
@@ -264,5 +267,33 @@ public class PageOneStepConvertRateSpark {
         }
 
         return convertRateMap;
+    }
+
+    /**
+     * 持久化页面切片转化率
+     *
+     * @param taskId         任务ID
+     * @param convertRateMap 页面切片转化率
+     */
+    private static void persistConvertRate(Map<String, Double> convertRateMap, long taskId) {
+        StringBuffer sb = new StringBuffer();
+
+        for (Map.Entry<String, Double> convertRateEntry : convertRateMap.entrySet()) {
+            String pageSplit = convertRateEntry.getKey();
+            double convertRate = convertRateEntry.getValue();
+
+            sb.append(pageSplit).append("=").append(convertRate).append("|");
+        }
+
+        String convertRate = sb.toString();
+        convertRate = convertRate.substring(0, convertRate.length() - 1);
+
+        //封装
+        PageSplitConvertRate pageSplitConvertRate = new PageSplitConvertRate();
+        pageSplitConvertRate.setTaskId(taskId);
+        pageSplitConvertRate.setConvertRate(convertRate);
+
+        IPageSplitConvertRateDao pageSplitConvertRateDao = DaoFactory.getPageSplitConvertRateDaoImpl();
+        pageSplitConvertRateDao.insert(pageSplitConvertRate);
     }
 }

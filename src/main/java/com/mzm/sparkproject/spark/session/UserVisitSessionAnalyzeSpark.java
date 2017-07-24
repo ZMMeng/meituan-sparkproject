@@ -398,34 +398,28 @@ public class UserVisitSessionAnalyzeSpark {
 
                         //按照筛选条件进行过滤
                         //按照年龄范围进行过滤 (startAge, endAge)
-                        if (!ValidUtils.between(aggrInfo, Constants.FIELD_AGE, parameter, Constants
-                                        .PARAM_START_AGE,
+                        if (!ValidUtils.between(aggrInfo, Constants.FIELD_AGE, parameter, Constants.PARAM_START_AGE,
                                 Constants.PARAM_END_AGE)) {
                             return false;
                         }
                         //按照职业范围过滤 professionals
-                        if (!ValidUtils.in(aggrInfo, Constants.FIELD_PROFESSIONAL, parameter,
-                                Constants.PARAM_PROFESSIONALS)) {
+                        if (!ValidUtils.in(aggrInfo, Constants.FIELD_PROFESSIONAL, parameter, Constants.PARAM_PROFESSIONALS)) {
                             return false;
                         }
                         //按照城市范围过滤 cities
-                        if (!ValidUtils.in(aggrInfo, Constants.FIELD_CITY, parameter, Constants
-                                .PARAM_CITIES)) {
+                        if (!ValidUtils.in(aggrInfo, Constants.FIELD_CITY, parameter, Constants.PARAM_CITIES)) {
                             return false;
                         }
                         //按照性别进行过滤 gender
-                        if (!ValidUtils.equal(aggrInfo, Constants.FIELD_GENDER, parameter, Constants
-                                .PARAM_GENDER)) {
+                        if (!ValidUtils.equal(aggrInfo, Constants.FIELD_GENDER, parameter, Constants.PARAM_GENDER)) {
                             return false;
                         }
                         //按照搜索关键词进行过滤 keywords
-                        if (!ValidUtils.in(aggrInfo, Constants.FIELD_SEARCH_KEYWORDS, parameter, Constants
-                                .PARAM_KEYWORDS)) {
+                        if (!ValidUtils.in(aggrInfo, Constants.FIELD_SEARCH_KEYWORDS, parameter, Constants.PARAM_KEYWORDS)) {
                             return false;
                         }
                         //按照品类ID进行过滤 categoryIds
-                        if (!ValidUtils.in(aggrInfo, Constants.FIELD_CLICK_CATEGORY_IDS, parameter,
-                                Constants.PARAM_CATEGORY_IDS)) {
+                        if (!ValidUtils.in(aggrInfo, Constants.FIELD_CLICK_CATEGORY_IDS, parameter, Constants.PARAM_CATEGORY_IDS)) {
                             return false;
                         }
 

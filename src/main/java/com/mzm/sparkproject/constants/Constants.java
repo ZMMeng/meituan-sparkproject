@@ -22,9 +22,9 @@ public interface Constants {
     //Spark是否本地运行
     String SPARK_LOCAL = "spark.local";
     //Session访问分析模块的测试任务ID
-    String SPARK_LOCAL_TASKID_SESSION = "spark.local.taskid.session";
+    String SPARK_LOCAL_TASKID_SESSION = "spark.local.task.session";
     //page单跳转化率分析模块的测试任务ID
-    String SPARK_LOCAL_TASKID_PAGE = "spark.local.taskid.page";
+    String SPARK_LOCAL_TASKID_PAGE = "spark.local.task.page";
 
     /**
      * Spark作业相关常量
