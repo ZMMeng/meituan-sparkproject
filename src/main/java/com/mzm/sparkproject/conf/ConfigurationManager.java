@@ -61,4 +61,19 @@ public class ConfigurationManager {
             throw new RuntimeException("读取" + key + "属性失败！", e);
         }
     }
+
+    /**
+     * 读取指定属性值
+     *
+     * @param key 属性名
+     * @return 相应的属性值，以boolean形式返回
+     */
+    public static Long getLong(String key) {
+        String value = getProperty(key);
+        try {
+            return Long.valueOf(value);
+        } catch (Exception e) {
+            throw new RuntimeException("读取" + key + "属性失败！", e);
+        }
+    }
 }

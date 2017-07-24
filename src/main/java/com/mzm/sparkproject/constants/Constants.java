@@ -21,12 +21,18 @@ public interface Constants {
     String JDBC_PASSWORD = "jdbc.password";
     //Spark是否本地运行
     String SPARK_LOCAL = "spark.local";
+    //Session访问分析模块的测试任务ID
+    String SPARK_LOCAL_TASKID_SESSION = "spark.local.taskid.session";
+    //page单跳转化率分析模块的测试任务ID
+    String SPARK_LOCAL_TASKID_PAGE = "spark.local.taskid.page";
 
     /**
      * Spark作业相关常量
      */
     //session分析作业名称
     String SPARK_APP_NAME_SESSION = "UserVisitSessionAnalyzeSpark";
+    //page分析作业名称
+    String SPARK_APP_NAME_PAGE = "pageOneStepConvertRateSpark";
     //会话ID
     String FIELD_SESSION_ID = "sessionId";
     //搜索关键词
@@ -115,5 +121,7 @@ public interface Constants {
     String PARAM_KEYWORDS = "keywords";
     //品类ID
     String PARAM_CATEGORY_IDS = "categoryIds";
+    //页面流
+    String PARAM_TARGET_PAGE_FLOW = "targetPageFlow";
 
 }
