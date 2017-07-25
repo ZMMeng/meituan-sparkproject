@@ -41,7 +41,7 @@ public class DaoFactory {
      *
      * @return 抽取会话详细信息DAO的实现类对象
      */
-    public static ISessionDetailDao getSessionDetailDaoImpl(){
+    public static ISessionDetailDao getSessionDetailDaoImpl() {
         return new SessionDetailDaoImpl();
     }
 
@@ -50,7 +50,7 @@ public class DaoFactory {
      *
      * @return Top10热门品类DAO的实现类对象
      */
-    public static ITop10CategoryDao getTop10CategoryDaoImpl(){
+    public static ITop10CategoryDao getTop10CategoryDaoImpl() {
         return new Top10CategoryDaoImpl();
     }
 
@@ -59,7 +59,7 @@ public class DaoFactory {
      *
      * @return Top10活跃session的DAO的实现类
      */
-    public static ITop10SessionDao getTop10SessionDaoImpl(){
+    public static ITop10SessionDao getTop10SessionDaoImpl() {
         return new Top10SessionDaoImpl();
     }
 
@@ -68,7 +68,16 @@ public class DaoFactory {
      *
      * @return 获取页面切片转化率的DAO的实现类
      */
-    public static IPageSplitConvertRateDao getPageSplitConvertRateDaoImpl(){
+    public static IPageSplitConvertRateDao getPageSplitConvertRateDaoImpl() {
         return new PageSplitConvertRateDaoImpl();
+    }
+
+    /**
+     * 获取各区域Top3热门商品的DAO
+     *
+     * @return 各区域Top3热门商品的DAO的实现类
+     */
+    public static IAreaTop3ProductDao getAreaTop3ProductDaoImpl() {
+        return new AreaTop3ProductListDaoImpl();
     }
 }

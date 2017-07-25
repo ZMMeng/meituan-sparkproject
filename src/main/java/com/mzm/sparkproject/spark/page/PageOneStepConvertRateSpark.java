@@ -84,6 +84,9 @@ public class PageOneStepConvertRateSpark {
 
         //向MySQL中插入页面切片转化率统计结果
         persistConvertRate(convertRateMap, taskId);
+
+        //关闭上下文
+        sc.close();
     }
 
     /**

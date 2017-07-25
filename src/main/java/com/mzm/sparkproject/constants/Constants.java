@@ -22,9 +22,11 @@ public interface Constants {
     //Spark是否本地运行
     String SPARK_LOCAL = "spark.local";
     //Session访问分析模块的测试任务ID
-    String SPARK_LOCAL_TASKID_SESSION = "spark.local.task.session";
+    String SPARK_LOCAL_TASKID_SESSION = "spark.local.taskid.session";
     //page单跳转化率分析模块的测试任务ID
-    String SPARK_LOCAL_TASKID_PAGE = "spark.local.task.page";
+    String SPARK_LOCAL_TASKID_PAGE = "spark.local.taskid.page";
+    //各区域热门商品Top3分析模块的测试任务ID
+    String SPARK_LOCAL_TASKID_PRODUCT = "spark.local.taskid.product";
 
     /**
      * Spark作业相关常量
@@ -32,7 +34,9 @@ public interface Constants {
     //session分析作业名称
     String SPARK_APP_NAME_SESSION = "UserVisitSessionAnalyzeSpark";
     //page分析作业名称
-    String SPARK_APP_NAME_PAGE = "pageOneStepConvertRateSpark";
+    String SPARK_APP_NAME_PAGE = "PageOneStepConvertRateSpark";
+    //prduct分析作业名称
+    String SPARK_APP_NAME_PRODUCT = "AreaTop3ProductSpark";
     //会话ID
     String FIELD_SESSION_ID = "sessionId";
     //搜索关键词
