@@ -28,6 +28,11 @@ public interface Constants {
     //各区域热门商品Top3分析模块的测试任务ID
     String SPARK_LOCAL_TASKID_PRODUCT = "spark.local.taskid.product";
 
+    //Kafka集群的主机名和端口号
+    String KAFKA_META_DATA_BROKER_LIST="kafka.metadata.broker.list";
+    //Kafka的Topics
+    String KAFKA_TOPICS = "kafka.topics";
+
     /**
      * Spark作业相关常量
      */
@@ -37,6 +42,8 @@ public interface Constants {
     String SPARK_APP_NAME_PAGE = "PageOneStepConvertRateSpark";
     //prduct分析作业名称
     String SPARK_APP_NAME_PRODUCT = "AreaTop3ProductSpark";
+    //ad分析作业名称
+    String SPARK_APP_NAME_AD = "AdClickRealTimeStatSpark";
     //会话ID
     String FIELD_SESSION_ID = "sessionId";
     //搜索关键词

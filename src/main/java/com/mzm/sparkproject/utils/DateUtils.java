@@ -150,4 +150,14 @@ public class DateUtils {
         }
     }
 
+    /**
+     * 对指定日期key进行格式化
+     *
+     * @param date 指定的日期key
+     * @return 格式化的日期key
+     */
+    public static String formatDateKey(Date date) {
+        return DATEKEY_FORMAT.format(date);
+    }
+
 }
