@@ -160,4 +160,29 @@ public class DateUtils {
         return DATEKEY_FORMAT.format(date);
     }
 
+    /**
+     * 将日期字符串转换成日期
+     *
+     * @param dateKey 日期字符串
+     * @return 日期
+     */
+    public static Date parseDateKey(String dateKey) {
+        try {
+            return DATEKEY_FORMAT.parse(dateKey);
+        } catch (ParseException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * 格式化时间(到分钟)
+     *
+     * @param date 时间
+     * @return 格式化时间字符串
+     */
+    public static String formatTimeMinute(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHHmm");
+        return sdf.format(date);
+    }
+
 }

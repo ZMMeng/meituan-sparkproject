@@ -80,4 +80,40 @@ public class DaoFactory {
     public static IAreaTop3ProductDao getAreaTop3ProductDaoImpl() {
         return new AreaTop3ProductListDaoImpl();
     }
+
+    /**
+     * 获取用户广告点击量的DAO
+     *
+     * @return 用户广告点击量的DAO的实现类
+     */
+    public static IAdUserClickCountDao getAdUserClickCountDaoImpl() {
+        return new AdUserClickCountDaoImpl();
+    }
+
+    /**
+     * 获取广告点击量黑名单用户的DAO
+     *
+     * @return 广告点击量黑名单用户的DAO的实现类
+     */
+    public static IAdBlackListDao getAdBlackListDaoImpl() {
+        return new AdBlackListDaoImpl();
+    }
+
+    /**
+     * 获取天各省各城市各支广告点击量的实时统计DAO
+     *
+     * @return 天各省各城市各支广告点击量的实时统计DAO的实现类
+     */
+    public static IAdStatDao getAdStatDaoImpl() {
+        return new AdStatDaoImpl();
+    }
+
+    /**
+     * 获取每天各省Top3热门广告DAO
+     *
+     * @return 每天各省Top3热门广告DAO的实现类
+     */
+    public static IAdProvinceTop3Dao getAdProvinceTop3DaoImpl() {
+        return new AdProvinceTop3DaoImpl();
+    }
 }
