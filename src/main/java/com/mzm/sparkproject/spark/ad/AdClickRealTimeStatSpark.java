@@ -4,15 +4,9 @@ import com.google.common.base.Optional;
 
 import com.mzm.sparkproject.conf.ConfigurationManager;
 import com.mzm.sparkproject.constants.Constants;
-import com.mzm.sparkproject.dao.IAdBlackListDao;
-import com.mzm.sparkproject.dao.IAdProvinceTop3Dao;
-import com.mzm.sparkproject.dao.IAdStatDao;
-import com.mzm.sparkproject.dao.IAdUserClickCountDao;
+import com.mzm.sparkproject.dao.*;
 import com.mzm.sparkproject.dao.factory.DaoFactory;
-import com.mzm.sparkproject.domain.AdBlackList;
-import com.mzm.sparkproject.domain.AdProvinceTop3;
-import com.mzm.sparkproject.domain.AdStat;
-import com.mzm.sparkproject.domain.AdUserClickCount;
+import com.mzm.sparkproject.domain.*;
 import com.mzm.sparkproject.utils.DateUtils;
 import com.mzm.sparkproject.utils.SparkUtils;
 
@@ -91,7 +85,7 @@ public class AdClickRealTimeStatSpark {
         calculateProvinceTop3Ads(adRealTimeStatDStream);
 
         //实时统计每天每个广告在最近1h内的滑动窗口内的点击趋势(每分钟的点击量)
-
+        calculateAdClickCountByWindow(filteredAdRealTimeLogDStream);
 
         //启动上下文
         jssc.start();
@@ -574,6 +568,11 @@ public class AdClickRealTimeStatSpark {
         });
     }
 
+    /**
+     * 计算最近一小时广告的点击量
+     *
+     * @param filteredAdRealTimeLogDStream 过滤后的广告点击数据
+     */
     private static void calculateAdClickCountByWindow(JavaPairDStream<String, String> filteredAdRealTimeLogDStream){
 
         //将过滤后的广告点击数据，映射成(时间(到分钟)_广告ID,1)的形式
@@ -599,6 +598,42 @@ public class AdClickRealTimeStatSpark {
                     }
         }, Durations.minutes(60), Durations.seconds(10));
 
+        aggrRDD.foreachRDD(new Function<JavaPairRDD<String, Long>, Void>() {
+            @Override
+            public Void call(JavaPairRDD<String, Long> rdd) throws Exception {
+                rdd.foreachPartition(new VoidFunction<Iterator<Tuple2<String, Long>>>() {
+                    @Override
+                    public void call(Iterator<Tuple2<String, Long>> iterator) throws Exception {
+                        List<AdClickTrend> adClickTrendList = new ArrayList<>();
+
+                        while(iterator.hasNext()){
+                            Tuple2<String, Long> tuple = iterator.next();
+
+                            String[] keySplited = tuple._1.split("_");
+                            String dateMinute = keySplited[0];
+                            long adId = Long.valueOf(keySplited[1]);
+                            long clickCount = tuple._2;
+                            String date = DateUtils.formatDate(DateUtils.parseDateKey(dateMinute.substring(0, 8)));
+                            String hour = dateMinute.substring(8, 10);
+                            String minute = dateMinute.substring(10);
+
+                            AdClickTrend adClickTrend = new AdClickTrend();
+                            adClickTrend.setDate(date);
+                            adClickTrend.setHour(hour);
+                            adClickTrend.setMinute(minute);
+                            adClickTrend.setAdId(adId);
+                            adClickTrend.setClickCount(clickCount);
+
+                            adClickTrendList.add(adClickTrend);
+                        }
+
+                        IAdClickTrendDao adClickTrendDao = DaoFactory.getAdClickTrendDaoImpl();
+                        adClickTrendDao.updateBatch(adClickTrendList);
+                    }
+                });
+                return null;
+            }
+        });
     }
 
 }

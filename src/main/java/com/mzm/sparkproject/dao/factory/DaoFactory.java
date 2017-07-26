@@ -116,4 +116,13 @@ public class DaoFactory {
     public static IAdProvinceTop3Dao getAdProvinceTop3DaoImpl() {
         return new AdProvinceTop3DaoImpl();
     }
+
+    /**
+     * 获取最近一小时内广告点击量统计结果的DAO
+     *
+     * @return 最近一小时内广告点击量统计结果的DAO的实现类
+     */
+    public static IAdClickTrendDao getAdClickTrendDaoImpl() {
+        return new AdClickTrendDaoImpl();
+    }
 }
